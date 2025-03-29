@@ -6,7 +6,7 @@ const config = require('../config/config');
 
 const init = async () => {
   const server = Hapi.server({
-    port: config.port,
+    port: process.env.PORT || 9000,
     host: 'localhost',
   });
 

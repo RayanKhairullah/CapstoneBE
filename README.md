@@ -12,7 +12,7 @@ NeuroFin Backend API adalah layanan backend yang dirancang untuk mengelola data/
 - [Instalasi](#instalasi)
   - [Clone Repository](#clone-repository)
   - [Instal Dependencies](#instal-dependencies)
-  - [Konfigurasi Environment](#konfigurasi-environment)
+  - [Konfigurasi Database](#konfigurasi-database)
   - [Migrasi Database](#migrasi-database)
   - [Menjalankan Server di Local](#menjalankan-server-di-Local)
 - [Endpoint API](#endpoint-api)
@@ -68,20 +68,22 @@ cd NeuroFin
 npm install
 ```
 
-### Konfigurasi Environment
-
-Buat file `.env` berdasarkan contoh file `.env.example`:
-```dotenv
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=password
-DB_NAME=database
+### Konfigurasi Database
+Ganti file `config/config.example.json` menjadi `config/config.json`
+```
+kemudian isi keterangannya.
+"development": {
+    "username": "username",
+    "password": "password",
+    "database": "database_development",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
 ```
 
 ### Migrasi Database
 ```bash
-npx sequelize-cli db:migrate --config config/config.js
+npx sequelize-cli db:migrate
 ```
 
 ### Menjalankan Server di Local
