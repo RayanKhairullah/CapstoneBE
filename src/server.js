@@ -1,5 +1,8 @@
+require('dotenv').config();
+const Jwt = require('@hapi/jwt');
 const Hapi = require('@hapi/hapi');
 const routes = require('../routes/expenseRoutes');
+const authRoutes = require('../routes/authRoutes');
 const { sequelize } = require('../models');
 const errorHandler = require('../middlewares/errorHandler');
 const config = require('../config/config');
@@ -10,8 +13,19 @@ const init = async () => {
     host: 'localhost',
   });
 
-  server.route(routes);
+  server.route([...authRoutes, ...routes]);
 
+  await server.register(Jwt);
+  const secretKey = process.env.JWT_SECRET;
+  server.auth.strategy('jwt', 'jwt', {
+    keys: secretKey,
+    verify: { aud: false, iss: false, sub: false },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: { email: artifacts.decoded.payload.email },
+    }),
+  });
+  
   server.ext('onPreResponse', (request, h) => {
     const response = request.response;
     if (response.isBoom) {

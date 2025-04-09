@@ -7,6 +7,7 @@ const {
   deleteExpenseByIdHandler,
 } = require('../controllers/expenseController');
 const validationHandler = require('../middlewares/validationHandler');
+const authMiddleware = require('../middlewares/authMiddleware');
 
 const routes = [
   {
@@ -14,6 +15,7 @@ const routes = [
     path: '/expenses',
     handler: addExpenseHandler,
     options: {
+      pre: [{ method: authMiddleware }],
       cors: { origin: ['*'] },
       validate: {
         payload: Joi.object({
@@ -38,6 +40,7 @@ const routes = [
     path: '/expenses/{expenseid}',
     handler: getExpenseByIdHandler,
     options: {
+      pre: [{ method: authMiddleware }],
       validate: {
         params: Joi.object({
           expenseid: Joi.string().required(),
@@ -51,6 +54,7 @@ const routes = [
     path: '/expenses/{expenseid}',
     handler: updateExpenseByIdHandler,
     options: {
+      pre: [{ method: authMiddleware }],
       validate: {
         params: Joi.object({
           expenseid: Joi.string().required(),
@@ -72,6 +76,7 @@ const routes = [
     path: '/expenses/{expenseid}',
     handler: deleteExpenseByIdHandler,
     options: {
+      pre: [{ method: authMiddleware }],
       validate: {
         params: Joi.object({
           expenseid: Joi.string().required(),

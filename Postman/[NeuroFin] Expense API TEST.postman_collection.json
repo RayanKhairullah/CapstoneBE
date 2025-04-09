@@ -1,12 +1,157 @@
 {
 	"info": {
 		"_postman_id": "188cc397-e9a3-41fe-b71d-a9b23c2c43cf",
-		"name": "[NeuroFin] Expense API TEST",
+		"name": "[NeuroFin] API TEST",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "[Mandatory] Create Expense",
+			"name": "[NeuroFin]Register User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"status code harus 201 atau 400\", function () {",
+							"    pm.expect([201, 400]).to.include(pm.response.code);",
+							"});",
+							"",
+							"pm.test('response harus berupa JSON', () => {",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+							"});",
+							"",
+							"pm.test(\"response memiliki status dan message\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"status\");",
+							"    pm.expect(jsonData).to.have.property(\"message\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"userthree\",\n  \"email\": \"userthree@gmail.com\",\n  \"password\": \"password123\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[NeuroFin] Verify Email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains success status\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"success\");",
+							"    pm.expect(jsonData.message).to.eql(\"Email berhasil diverifikasi\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"user1@example.com\",\n  \"code\": \"79044562-a62f-47a3-a1b6-c1d9849ae73e\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/verify-email",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"verify-email"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[NeuroFin] Login User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains success status\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"success\");",
+							"    pm.expect(jsonData.message).to.eql(\"Login berhasil\");",
+							"    pm.expect(jsonData.data).to.have.property(\"token\");",
+							"});",
+							"",
+							"pm.environment.set(\"authToken\", pm.response.json().data.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"user1@example.com\",\n  \"password\": \"password123\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[NeuroFin] Create Expense",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -51,6 +196,11 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -70,7 +220,7 @@
 			"response": []
 		},
 		{
-			"name": "[Mandatory] Create Expense Without Catagory",
+			"name": "[NeuroFin] Create Expense Without Catagory",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -107,6 +257,11 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -126,7 +281,7 @@
 			"response": []
 		},
 		{
-			"name": "[Mandatory] Get All Expenses",
+			"name": "[NeuroFin] Get All Expenses",
 			"event": [
 				{
 					"listen": "test",
@@ -154,6 +309,11 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -169,7 +329,7 @@
 			"response": []
 		},
 		{
-			"name": "[Mandatory] Get Expense Correct ID",
+			"name": "[NeuroFin] Get Expense Correct ID",
 			"event": [
 				{
 					"listen": "test",
@@ -196,6 +356,11 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -212,7 +377,7 @@
 			"response": []
 		},
 		{
-			"name": "[Mandatory] Get Expense Invalid ID",
+			"name": "[NeuroFin] Get Expense Invalid ID",
 			"event": [
 				{
 					"listen": "test",
@@ -239,6 +404,11 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -255,7 +425,7 @@
 			"response": []
 		},
 		{
-			"name": "[Mandatory] Update Expense",
+			"name": "[NeuroFin] Update Expense",
 			"event": [
 				{
 					"listen": "test",
@@ -282,6 +452,11 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -302,7 +477,7 @@
 			"response": []
 		},
 		{
-			"name": "[Mandatory] Update Expense Without Category",
+			"name": "[NeuroFin] Update Expense Without Category",
 			"event": [
 				{
 					"listen": "test",
@@ -330,6 +505,11 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -350,7 +530,7 @@
 			"response": []
 		},
 		{
-			"name": "[Mandatory] Update Expense Invalid Id",
+			"name": "[NeuroFin] Update Expense Invalid Id",
 			"event": [
 				{
 					"listen": "test",
@@ -378,6 +558,11 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
 					}
 				],
 				"body": {
@@ -398,7 +583,7 @@
 			"response": []
 		},
 		{
-			"name": "[Mandatory] Delete Expense correct id",
+			"name": "[NeuroFin] Delete Expense correct id",
 			"event": [
 				{
 					"listen": "test",
@@ -425,6 +610,11 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
 					}
 				],
 				"url": {
@@ -441,7 +631,7 @@
 			"response": []
 		},
 		{
-			"name": "[Mandatory] Delete Expense Invalid id",
+			"name": "[NeuroFin] Delete Expense Invalid id",
 			"event": [
 				{
 					"listen": "test",
@@ -468,6 +658,11 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
 						"type": "text"
 					}
 				],

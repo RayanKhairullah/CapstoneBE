@@ -3,10 +3,17 @@ const Boom = require('@hapi/boom');
 
 const errorHandler = (error, h) => {
   if (Boom.isBoom(error)) {
-    return h.response(error.output.payload).code(error.output.statusCode);
+    return h.response({
+      status: 'fail',
+      statusCode: error.output.statusCode,
+      message: error.output.payload.message,
+    }).code(error.output.statusCode);
   }
   logger.error('Unhandled error:', error);
-  return h.response({ statusCode: 500, error: 'Internal Server Error', message: 'An unexpected error occurred' }).code(500);
+  return h.response({
+    status: 'error',
+    message: 'Terjadi kesalahan pada server',
+  }).code(500);
 };
 
 module.exports = errorHandler;
