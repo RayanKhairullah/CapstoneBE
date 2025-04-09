@@ -102,8 +102,16 @@ const loginHandler = async (request, h) => {
     throw Boom.forbidden('Harap verifikasi email Anda terlebih dahulu');
   }
 
-  const token = Jwt.token.generate({ email }, { key: process.env.JWT_SECRET, algorithm: 'HS256' });
-  return h.response({ status: 'success', message: 'Login berhasil', data: { token } }).code(200);
+  const token = Jwt.token.generate(
+    { email },
+    { key: process.env.JWT_SECRET, algorithm: 'HS256' }
+  );
+
+  return h.response({
+    status: 'success',
+    message: 'Login berhasil',
+    data: { token },
+  }).code(200);
 };
 
 module.exports = { registerHandler, verifyEmailHandler, loginHandler };
