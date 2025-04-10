@@ -1,9 +1,9 @@
 const { User } = require('../models');
 const Bcrypt = require('bcrypt');
-const { v4: uuidv4 } = require('uuid');
 const { sendEmail } = require('../utils/email');
 const Jwt = require('jsonwebtoken');
 const Boom = require('@hapi/boom');
+const { nanoid } = require('nanoid');
 
 const registerHandler = async (request, h) => {
     const { username, email, password } = request.payload;
@@ -18,7 +18,7 @@ const registerHandler = async (request, h) => {
       }
   
       const hashedPassword = await Bcrypt.hash(password, 10);
-      const verificationCode = uuidv4();
+      const verificationCode = nanoid(10);
   
       const newUser = await User.create({
         username,
@@ -28,7 +28,7 @@ const registerHandler = async (request, h) => {
       });
   
       try {
-        await sendEmail(email, 'Verifikasi Email', `Kode verifikasi: ${verificationCode}`);
+        await sendEmail(email, 'Verifikasi Email Kamu - NeuroFin', `Halo! Terima kasih sudah mendaftar di NeuroFin. Kode verifikasi kamu adalah: ${verificationCode}`);
       } catch (emailError) {
         console.error('Error sending email:', emailError.message);
         return h.response({
