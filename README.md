@@ -1,4 +1,4 @@
-# NeuroFin Backend API Documentation
+# NeuroFin Backend AUTH & EXPENSES API  Documentation
 
 NeuroFin Backend API adalah layanan backend yang dirancang untuk mengelola data/pencatatan pengeluaran (expenses). API ini dibangun menggunakan framework **Hapi.js** dan memanfaatkan **PostgreSQL** sebagai database, yang dikelola melalui **Sequelize ORM**.
 
