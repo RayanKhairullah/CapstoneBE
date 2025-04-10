@@ -2,7 +2,7 @@ const { User } = require('../models');
 const Bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const { sendEmail } = require('../utils/email');
-const Jwt = require('@hapi/jwt');
+const Jwt = require('jsonwebtoken');
 const Boom = require('@hapi/boom');
 
 const registerHandler = async (request, h) => {
@@ -102,9 +102,10 @@ const loginHandler = async (request, h) => {
     throw Boom.forbidden('Harap verifikasi email Anda terlebih dahulu');
   }
 
-  const token = Jwt.token.generate(
+  const token = Jwt.sign(
     { email },
-    { key: process.env.JWT_SECRET, algorithm: 'HS256' }
+    process.env.JWT_SECRET,
+    { algorithm: 'HS256', expiresIn: '4h' }
   );
 
   return h.response({

@@ -1,18 +1,16 @@
-const Jwt = require('@hapi/jwt');
+const Jwt = require('jsonwebtoken');
 const Boom = require('@hapi/boom');
 
 const authMiddleware = (request, h) => {
   const authHeader = request.headers.authorization;
-  if (!authHeader) {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
     throw Boom.unauthorized('Token tidak ditemukan');
   }
   const token = authHeader.split(' ')[1];
-  console.log('JWT_SECRET:', process.env.JWT_SECRET);
-  console.log('Token:', token);
 
   try {
-    const decoded = Jwt.token.verify(token, process.env.JWT_SECRET);
-    request.auth = { user: decoded.decoded.payload };
+    const decoded = Jwt.verify(token, process.env.JWT_SECRET);
+    request.auth = { user: decoded };
     return h.continue;
   } catch (error) {
     console.error('Error verifying token:', error.message);
