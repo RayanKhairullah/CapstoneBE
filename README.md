@@ -1,35 +1,11 @@
-# NeuroFin Backend API Documentation
+# NeuroFin Backend AUTH & EXPENSES API  Documentation
 
 NeuroFin Backend API adalah layanan backend yang dirancang untuk mengelola data/pencatatan pengeluaran (expenses). API ini dibangun menggunakan framework **Hapi.js** dan memanfaatkan **PostgreSQL** sebagai database, yang dikelola melalui **Sequelize ORM**.
 
 ---
-
-## Daftar Isi
-
-- [Deskripsi](#deskripsi)
-- [Fitur Utama](#fitur-utama)
-- [Struktur Database](#struktur-database)
-- [Instalasi](#instalasi)
-  - [Clone Repository](#clone-repository)
-  - [Instal Dependencies](#instal-dependencies)
-  - [Konfigurasi Database](#konfigurasi-database)
-  - [Migrasi Database](#migrasi-database)
-  - [Menjalankan Server di Local](#menjalankan-server-di-Local)
-- [Endpoint API](#endpoint-api)
-  - [1. Add Expense](#1-add-expense)
-  - [2. Get All Expenses](#2-get-all-expenses)
-  - [3. Get Expense by ID](#3-get-expense-by-id)
-  - [4. Update Expense by ID](#4-update-expense-by-id)
-  - [5. Delete Expense by ID](#5-delete-expense-by-id)
-- [Error Handling](#error-handling)
-- [Logging](#logging)
-- [Testing](#testing)
-- [Kontributor](#kontributor)
-
+- [ API Auth Origin ](https://github.com/AgungADL/Capstone-backend-auth)
 ---
-
-
-## Fitur Utama
+## Fitur Utama Expense
 
 - **Menambahkan Pengeluaran (Add Expense)**
 - **Melihat Semua Pengeluaran (Get All Expenses)**
@@ -80,6 +56,17 @@ kemudian isi keterangannya.
     "dialect": "postgres"
   },
 ```
+  
+### .Env
+Ganti file `.env.example` menjadi `.env` dan sesuaikan isi konfigurasinya
+```
+EMAIL_SERVICE=gmail
+EMAIL_USER=yourgmail@gmail.com
+EMAIL_PASS=your_app_password
+JWT_SECRET=jwtsecret
+PORT=9000
+```
+
 
 ### Migrasi Database
 ```bash
@@ -94,12 +81,10 @@ Server akan berjalan di [http://localhost:9000](http://localhost:9000).
 
 ---
 
-## Endpoint API
-
-### 1. Add Expense
-
+## Endpoint API Expense
 - **URL:** `POST /expenses`
 - **Headers:** `Content-Type: application/json`
+- **Headers:** `Authorization: Bearer {{authToken}}`
 - **Body:**
   ```json
   {
@@ -183,6 +168,7 @@ Server akan berjalan di [http://localhost:9000](http://localhost:9000).
 
 - **URL:** `PUT /expenses/{expenseid}`
 - **Headers:** `Content-Type: application/json`
+- **Headers:** `Authorization: Bearer {{authToken}}`
 - **Body:**
   ```json
   {
@@ -241,16 +227,9 @@ Semua error dikembalikan dalam format berikut:
 
 ---
 
-## Logging
-
-Proyek ini menggunakan **Pino** untuk logging. Level log dapat diatur melalui variabel lingkungan `LOG_LEVEL` pada file `.env`.  
-Default level adalah `info`.
-
----
-
 ## Testing
 
-Gunakan file Postman Collection yang tersedia untuk menguji API:
+Gunakan file Postman Collection pada folder postman untuk menguji API:
 - **Collection:** `[NeuroFin] Expense API TEST.postman_collection.json`
 - **Environment:** `[NeuroFin] Expenses API Environtment.postman_environment.json`
 
@@ -258,5 +237,5 @@ Gunakan file Postman Collection yang tersedia untuk menguji API:
 
 ## Kontributor
 
-- **Backend Developer:** Rayan Khairullah Al Rafy  
-  **From:** NeuroFin Project
+- **Backend Developer:** Rayan Khairullah Al Rafy  & [ Agung Arya Dwipa Laksana ](https://github.com/AgungADL/Capstone-backend-auth)
+- **From:** NeuroFin Project

@@ -1,12 +1,12 @@
 {
 	"info": {
-		"_postman_id": "188cc397-e9a3-41fe-b71d-a9b23c2c43cf",
+		"_postman_id": "fdad10e1-1a05-4b03-a4a2-25055f3e9c92",
 		"name": "[NeuroFin] API TEST",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "[NeuroFin]Register User",
+			"name": "[NeuroFin] Register User",
 			"event": [
 				{
 					"listen": "test",
@@ -41,13 +41,15 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"userthree\",\n  \"email\": \"userthree@gmail.com\",\n  \"password\": \"password123\"\n}"
+					"raw": "{\n  \"username\": \"userfive\",\n  \"email\": \"userfive@gmail.com\",\n  \"password\": \"securepassword\"\n}"
 				},
 				"url": {
-					"raw": "{{baseUrl}}/register",
+					"raw": "http://localhost:9000/register",
+					"protocol": "http",
 					"host": [
-						"{{baseUrl}}"
+						"localhost"
 					],
+					"port": "9000",
 					"path": [
 						"register"
 					]
@@ -87,7 +89,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"user1@example.com\",\n  \"code\": \"79044562-a62f-47a3-a1b6-c1d9849ae73e\"\n}"
+					"raw": "{\n  \"email\": \"userthree@gmail.com\",\n  \"code\": \"52eaf81a-98fd-46c5-a625-5e12b9af1035\"\n}"
 				},
 				"url": {
 					"raw": "{{baseUrl}}/verify-email",
@@ -119,7 +121,11 @@
 							"    pm.expect(jsonData.data).to.have.property(\"token\");",
 							"});",
 							"",
-							"pm.environment.set(\"authToken\", pm.response.json().data.token);"
+							"pm.test(\"Set authToken environment variable\", function () {",
+							"    const token = pm.response.json().data.token;",
+							"    pm.environment.set(\"authToken\", token);",
+							"});",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -136,7 +142,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"user1@example.com\",\n  \"password\": \"password123\"\n}"
+					"raw": "{\n  \"email\": \"userfive@gmail.com\",\n  \"password\": \"password123\"\n}"
 				},
 				"url": {
 					"raw": "{{baseUrl}}/login",

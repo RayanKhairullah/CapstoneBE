@@ -1,99 +1,107 @@
-const { User } = require('../models');
+const prisma = require('../utils/prisma');
 const Bcrypt = require('bcrypt');
-const { v4: uuidv4 } = require('uuid');
 const { sendEmail } = require('../utils/email');
-const Jwt = require('@hapi/jwt');
+const Jwt = require('jsonwebtoken');
 const Boom = require('@hapi/boom');
+const { nanoid } = require('nanoid');
 
 const registerHandler = async (request, h) => {
-    const { username, email, password } = request.payload;
+  const { username, email, password } = request.payload;
   
-    try {
-      const existingUser = await User.findOne({ where: { email } });
-      if (existingUser) {
-        return h.response({
-          status: 'fail',
-          message: 'Email sudah terdaftar',
-        }).code(400);
-      }
+  try {
+    // Cek apakah user sudah ada
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return h.response({
+        status: 'fail',
+        message: 'Email sudah terdaftar',
+      }).code(400);
+    }
   
-      const hashedPassword = await Bcrypt.hash(password, 10);
-      const verificationCode = uuidv4();
+    const hashedPassword = await Bcrypt.hash(password, 10);
+    const verificationCode = nanoid(10);
   
-      const newUser = await User.create({
+    await prisma.user.create({
+      data: {
         username,
         email,
         password: hashedPassword,
         verificationCode,
-      });
+        // Pastikan field verified di schema Anda bersifat opsional atau default false
+      },
+    });
   
-      try {
-        await sendEmail(email, 'Verifikasi Email', `Kode verifikasi: ${verificationCode}`);
-      } catch (emailError) {
-        console.error('Error sending email:', emailError.message);
-        return h.response({
-          status: 'fail',
-          message: 'Gagal mengirim email verifikasi',
-        }).code(500);
-      }
-  
+    try {
+      await sendEmail(
+        email,
+        'Verifikasi Email Kamu - NeuroFin',
+        `Halo! Terima kasih sudah mendaftar di NeuroFin. Kode verifikasi kamu adalah: ${verificationCode}`
+      );
+    } catch (emailError) {
+      console.error('Error sending email:', emailError.message);
       return h.response({
-        status: 'success',
-        message: 'Registrasi berhasil, cek email untuk verifikasi',
-      }).code(201);
-    } catch (error) {
-      console.error('Error during registration:', error.message);
-      return h.response({
-        status: 'error',
-        message: 'Terjadi kesalahan pada server',
+        status: 'fail',
+        message: 'Gagal mengirim email verifikasi',
       }).code(500);
     }
+  
+    return h.response({
+      status: 'success',
+      message: 'Registrasi berhasil, cek email untuk verifikasi',
+    }).code(201);
+  } catch (error) {
+    console.error('Error during registration:', error.message);
+    return h.response({
+      status: 'error',
+      message: 'Terjadi kesalahan pada server',
+    }).code(500);
+  }
 };
 
 const verifyEmailHandler = async (request, h) => {
-    const { email, code } = request.payload;
+  const { email, code } = request.payload;
   
-    try {
-      console.log('Email dari request:', email);
-      console.log('Kode verifikasi dari request:', code);
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
   
-      const user = await User.findOne({ where: { email } });
-      console.log('Data pengguna dari database:', user);
-  
-      if (!user) {
-        return h.response({
-          status: 'fail',
-          message: 'Email tidak ditemukan',
-        }).code(404);
-      }
-  
-      if (user.verificationCode !== code) {
-        return h.response({
-          status: 'fail',
-          message: 'Kode verifikasi tidak valid',
-        }).code(400);
-      }
-  
-      user.verified = true;
-      await user.save();
-  
+    if (!user) {
       return h.response({
-        status: 'success',
-        message: 'Email berhasil diverifikasi',
-      }).code(200);
-    } catch (error) {
-      console.error('Error during email verification:', error.message);
-      return h.response({
-        status: 'error',
-        message: 'Terjadi kesalahan pada server',
-      }).code(500);
+        status: 'fail',
+        message: 'Email tidak ditemukan',
+      }).code(404);
     }
+  
+    if (user.verificationCode !== code) {
+      return h.response({
+        status: 'fail',
+        message: 'Kode verifikasi tidak valid',
+      }).code(400);
+    }
+  
+    await prisma.user.update({
+      where: { email },
+      data: {
+        verified: true,
+      },
+    });
+  
+    return h.response({
+      status: 'success',
+      message: 'Email berhasil diverifikasi',
+    }).code(200);
+  } catch (error) {
+    console.error('Error during email verification:', error.message);
+    return h.response({
+      status: 'error',
+      message: 'Terjadi kesalahan pada server',
+    }).code(500);
+  }
 };
 
 const loginHandler = async (request, h) => {
   const { email, password } = request.payload;
 
-  const user = await User.findOne({ where: { email } });
+  const user = await prisma.user.findUnique({ where: { email } });
   if (!user || !(await Bcrypt.compare(password, user.password))) {
     throw Boom.unauthorized('Email atau kata sandi tidak valid');
   }
@@ -102,9 +110,10 @@ const loginHandler = async (request, h) => {
     throw Boom.forbidden('Harap verifikasi email Anda terlebih dahulu');
   }
 
-  const token = Jwt.token.generate(
+  const token = Jwt.sign(
     { email },
-    { key: process.env.JWT_SECRET, algorithm: 'HS256' }
+    process.env.JWT_SECRET,
+    { algorithm: 'HS256', expiresIn: '4h' }
   );
 
   return h.response({
