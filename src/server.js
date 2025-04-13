@@ -7,7 +7,7 @@ const errorHandler = require('../middlewares/errorHandler');
 
 const init = async () => {
   const server = Hapi.server({
-    port: process.env.PORT || 9000,
+    port: process.env.PORT,
     host: 'localhost',
   });
 
