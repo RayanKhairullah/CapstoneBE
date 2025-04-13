@@ -1,35 +1,45 @@
-require('dotenv').config();
-const Hapi = require('@hapi/hapi');
+const { Server } = require('@hapi/hapi');
 const routes = require('../routes/expenseRoutes');
 const authRoutes = require('../routes/authRoutes');
 const prisma = require('../utils/prisma');
 const errorHandler = require('../middlewares/errorHandler');
 
-const init = async () => {
-  const server = Hapi.server({
-    port: process.env.PORT,
-    host: 'localhost',
-  });
+let cachedServer;
 
-  server.route([...authRoutes, ...routes]);
-  
-  server.ext('onPreResponse', (request, h) => {
-    const response = request.response;
-    if (response.isBoom) {
-      return errorHandler(response, h);
-    }
-    return h.continue;
-  });
+module.exports = async (req, res) => {
+  if (!cachedServer) {
+    const server = new Server({
+      port: process.env.PORT,
+      host: '0.0.0.0',
+    });
 
-  try {
+    server.route([...authRoutes, ...routes]);
+
+    server.ext('onPreResponse', (request, h) => {
+      const response = request.response;
+      if (response.isBoom) {
+        return errorHandler(response, h);
+      }
+      return h.continue;
+    });
+
     await prisma.$connect();
-    console.log('Database connected successfully.');
-    await server.start();
-    console.log(`Server running on ${server.info.uri}`);
-  } catch (error) {
-    console.error('Unable to start server:', error);
-    process.exit(1);
-  }
-};
+    await server.initialize(); // instead of server.start()
 
-init();
+    cachedServer = server;
+  }
+
+  const { req: hapiReq, res: hapiRes } = await cachedServer.inject({
+    method: req.method,
+    url: req.url,
+    headers: req.headers,
+    payload: req.body,
+  });
+
+  res.statusCode = hapiRes.statusCode;
+  for (const [key, value] of Object.entries(hapiRes.headers)) {
+    res.setHeader(key, value);
+  }
+
+  res.end(hapiRes.rawPayload || '');
+};
