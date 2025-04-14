@@ -23,7 +23,7 @@ model User {
 
 model Expense {
   expenseid         String   @id
-  id_user           Int      // tambahkan field ini untuk menyimpan foreign key
+  id_user           Int      
   category          String
   uangmasuk         Decimal  @default(0.00)
   uangkeluar        Decimal  @default(0.00)
