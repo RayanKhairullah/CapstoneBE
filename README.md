@@ -7,6 +7,11 @@
 - **ORM:** `Prisma`
 - **dependencies:**  
 ```json
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "postinstall": "prisma generate",
+    "start": "node api/index.js"
+  },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@hapi/hapi": "^21.4.0",
@@ -17,15 +22,15 @@
     "dotenv": "^16.4.7",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "nanoid": "^5.1.5",
+    "nanoid": "^3.3.6",
     "nodemailer": "^6.10.0",
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
-    "pino": "^9.6.0",
-    "prisma": "^6.6.0"
+    "pino": "^9.6.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "prisma": "^6.6.0"
   }
 ```
 - **Deploy database:** `Supabase` 
@@ -39,6 +44,8 @@
 - **Register**
 - **Login**
 - **verify Email**
+- **mengambil data user**
+- **logut**
 - **Menambahkan Pengeluaran (Add Expense)**
 - **Melihat Semua Pengeluaran (Get All Expenses)**
 - **Melihat Detail Pengeluaran Berdasarkan ID (Get Expense by ID)**
@@ -47,18 +54,47 @@
 
 ---
 
-## Struktur Database
+## schema.prisma
 
 ```sql
-CREATE TABLE expenses (
-    expenseid VARCHAR(11) PRIMARY KEY,
-    category VARCHAR(255) NOT NULL,
-    uangmasuk NUMERIC(15, 2) DEFAULT 0.00,
-    uangkeluar NUMERIC(15, 2) DEFAULT 0.00,
-    uangakhir NUMERIC(15, 2) NOT NULL,
-    description TEXT,
-    transaction_date DATE NOT NULL
-);
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id               Int      @id @default(autoincrement())
+  username         String
+  email            String   @unique
+  password         String
+  verified         Boolean  @default(false)
+  verificationCode String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  expenses Expense[]
+}
+
+model Expense {
+  expenseid        String   @id 
+  id_user          Int
+  category         String
+  uangmasuk        Decimal  @default(0.0) @db.Decimal(15, 2)
+  uangkeluar       Decimal  @default(0.0) @db.Decimal(15, 2)
+  uangakhir        Decimal  @db.Decimal(15, 2)
+  description      String?
+  transaction_date DateTime
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [id_user], references: [id])
+}
 ```
 
 ---
@@ -79,26 +115,26 @@ npm install
 ### .Env
 Ganti file `.env.example` menjadi `.env` dan sesuaikan isi konfigurasinya
 ```
+# Connect to Supabase via connection pooling.
+DATABASE_URL=your_database_url
+# Direct connection to the database. Used for migrations.
+DIRECT_URL=your_database_url
+
 # email service configuration
 EMAIL_SERVICE=gmail
 EMAIL_USER=yourgmail@gmail.com
 EMAIL_PASS=your_app_password
 
-JWT_SECRET=
+JWT_SECRET=your_jwt_secret
 PORT=9000
-
-# Connect to Supabase via connection pooling.
-DATABASE_URL=your_database_url
-# Direct connection to the database. Used for migrations.
-DIRECT_URL=your_database_url
 ```
 
 ### Migrasi Database
-Pastikan folder "20250413035715_init" ada, jika belum ada jalankan perintah:
+Pastikan folder migrations "contoh: 20250415062651_init" sudah ada, jika belum dapat jalankan perintah:
 ```bash
 npx prisma migrate dev --name init
 
-untuk mengekstrak schema database ke dalam file schema.prisma
+untuk mengekstrak schema database kedalam migration.sql
 ```
 
 ### Menjalankan Server di Local
@@ -152,7 +188,7 @@ Server akan berjalan di [http://localhost:9000](http://localhost:9000).
 - **Request example:**
   ```json
   {
-    "email": "mbakrin2ai@gmail.com",
+    "email": "emailbudi@gmail.com",
     "password": "securepassword"
   }
   ```
@@ -167,7 +203,10 @@ Server akan berjalan di [http://localhost:9000](http://localhost:9000).
   }
   ```
 
-**Headers:** `Content-Type: application/json` header untuk semua endpoint expense
+**Headers:** 
+`Content-Type: application/json` 
+`Authorization: Bearer {{authToken}}`
+untuk header semua endpoint expense, me dan logout
 ### 1. Create Expense
 
 - **URL:** `POST /expenses`
@@ -296,7 +335,51 @@ Server akan berjalan di [http://localhost:9000](http://localhost:9000).
     "message": "Expense gagal dihapus. Id tidak ditemukan"
   }
   ```
+  
+  ### 6. Me
 
+- **URL:** `GET /me`
+- **Response (Jika Berhasil):**
+  ```json
+  {
+      "status": "success",
+      "message": "Berhasil mendapatkan data user",
+      "data": {
+          "id": 1,
+          "username": "user",
+          "email": "emailbudi@gmail.com",
+          "verified": true,
+          "createdAt": "2025-04-15T06:38:50.433Z"
+      }
+  }
+  ```
+- **Response (Jika Tidak Ditemukan):**
+  ```json
+  {
+      "status": "fail",
+      "statusCode": 401,
+      "message": "Token tidak valid atau kadaluarsa"
+  }
+  ```
+
+  ### 7. Logout
+
+- **URL:** `POST /logout`
+- **Response (Jika Berhasil):**
+  ```json
+  {
+      "status": "success",
+      "message": "Logout berhasil"
+  }
+  ```
+- **Response (Jika Tidak Ditemukan):**
+  ```json
+  {
+      "status": "fail",
+      "statusCode": 401,
+      "message": "Token tidak valid atau kadaluarsa"
+  }
+  ```
 ---
 
 ## Error Handling
