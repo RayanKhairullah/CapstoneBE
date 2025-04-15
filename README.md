@@ -145,7 +145,7 @@ Server akan berjalan di [http://localhost:9000](http://localhost:9000).
 
 ---
 
-## Endpoint API Expense
+## Endpoint API
 
 **Headers:** `Content-Type: application/json` untuk endpoint register, verify-email, dan login
 ### Register 

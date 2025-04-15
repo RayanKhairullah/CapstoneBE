@@ -22,7 +22,7 @@ const init = async () => {
 
   // Register cookie support
   server.state('token', {
-    ttl: 1000 * 60 * 60 * 4, // 4 hours
+    ttl: 1000 * 60 * 60 * 4,
     isSecure: process.env.NODE_ENV === 'production',
     isHttpOnly: true,
     encoding: 'none',

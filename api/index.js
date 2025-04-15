@@ -5,6 +5,8 @@ const routes = require('../routes/expenseRoutes');
 const authRoutes = require('../routes/authRoutes');
 const prisma = require('../utils/prismaClient');
 const errorHandler = require('../middlewares/errorHandler');
+const Inert = require('@hapi/inert');
+const path = require('path');
 
 let server;
 
@@ -24,9 +26,18 @@ async function initServer() {
       }
     });
 
-    // Register cookie support
+    await server.register(Inert);
+
+    server.route({
+      method: 'GET',
+      path: '/',
+      handler: {
+        file: path.join(__dirname, '../docs/docs.html')
+      }
+    });
+
     server.state('token', {
-      ttl: 1000 * 60 * 60 * 4, // 4 hours
+      ttl: 1000 * 60 * 60 * 4,
       isSecure: process.env.NODE_ENV === 'production',
       isHttpOnly: true,
       encoding: 'none',
@@ -61,12 +72,12 @@ module.exports = async (req, res) => {
       payload: req.body,
     });
 
-    // Set headers from the Hapi response
-    Object.entries(response.headers).forEach(([key, value]) => {
-      res.setHeader(key, value);
-    });
+    Object.entries(response.headers)
+      .filter(([key]) => key.toLowerCase() !== 'content-encoding')
+      .forEach(([key, value]) => {
+        res.setHeader(key, value);
+      });
 
-    // Send status and result
     res.status(response.statusCode).json(response.result);
   } catch (error) {
     console.error('Error processing request:', error);
