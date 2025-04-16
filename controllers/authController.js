@@ -55,7 +55,6 @@ const registerHandler = async (request, h) => {
     }).code(500);
   }
 };
-
 const verifyEmailHandler = async (request, h) => {
   const { email, code } = request.payload;
   
@@ -95,7 +94,6 @@ const verifyEmailHandler = async (request, h) => {
     }).code(500);
   }
 };
-
 const loginHandler = async (request, h) => {
   const { email, password } = request.payload;
 
@@ -127,7 +125,6 @@ const loginHandler = async (request, h) => {
       ttl: 1000 * 60 * 60 * 4,
     });
 };
-
 const meHandler = async (request, h) => {
   const { id } = request.auth.credentials;
   try {
@@ -154,7 +151,6 @@ const meHandler = async (request, h) => {
     }).code(500);
   }
 };
-
 const logoutHandler = async (request, h) => {
   return h.response({
     status: 'success',

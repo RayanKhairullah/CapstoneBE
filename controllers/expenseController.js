@@ -1,7 +1,6 @@
 const prisma = require('../utils/prismaClient');
 const { nanoid } = require('nanoid');
 const Boom = require('@hapi/boom');
-
 const addExpenseHandler = async (request, h) => {
   const userId = request.auth.credentials.id; 
   const {

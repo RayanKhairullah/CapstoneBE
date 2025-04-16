@@ -66,7 +66,6 @@ module.exports = async (req, res) => {
       res.setHeader(key, value);
     });  
 
-    // Send status and result
     res.status(response.statusCode).json(response.result);
   } catch (error) {
     console.error('Error processing request:', error);

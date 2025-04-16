@@ -4,8 +4,8 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "postinstall": "prisma generate",
-    "start": "node api/index.js"
+    "start": "node api/index.js",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
