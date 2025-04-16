@@ -1,11 +1,11 @@
-# API Neurofin Auth & Expenses API  Documentation
+# 🚀 API Neurofin Auth & Expenses API Documentation
 
-## Tecnology
-- **Bahasa:** `Java Script`
-- **Framework:** `Hapi.Js`
-- **Database:** `PostgreSQL`
-- **ORM:** `Prisma`
-- **dependencies:**  
+## 💻 Tecnology
+- **Bahasa:** `Java Script` 📝
+- **Framework:** `Hapi.Js` 🔧
+- **Database:** `PostgreSQL` 🗄️
+- **ORM:** `Prisma` 📦
+- **dependencies:** ⚙️  
 ```json
   "scripts": {
     "dev": "nodemon src/server.js",
@@ -33,24 +33,26 @@
     "prisma": "^6.6.0"
   }
 ```
-- **Deploy database:** `Supabase` 
+- **Deploy database:** `Supabase` ☁️
 
 ---
-## API Auth Origin
-- [ API Auth Origin ](https://github.com/AgungADL/Capstone-backend-auth)
+
+## 🔐 API Auth Origin
+- [ API Auth Origin ](https://github.com/AgungADL/Capstone-backend-auth) 🔗
+
 ---
 
-## Fitur Utama
-- **Register**
-- **Login**
-- **verify Email**
-- **mengambil data user**
-- **logut**
-- **Menambahkan Pengeluaran (Add Expense)**
-- **Melihat Semua Pengeluaran (Get All Expenses)**
-- **Melihat Detail Pengeluaran Berdasarkan ID (Get Expense by ID)**
-- **Memperbarui Pengeluaran Berdasarkan ID (Update Expense by ID)**
-- **Menghapus Pengeluaran Berdasarkan ID (Delete Expense by ID)**
+## ⭐ Fitur Utama
+- **Register** 📝
+- **Login** 🔑
+- **verify Email** 📧
+- **mengambil data user** 👤
+- **logut** 🚪
+- **Menambahkan Pengeluaran (Add Expense)** 💸
+- **Melihat Semua Pengeluaran (Get All Expenses)** 👀
+- **Melihat Detail Pengeluaran Berdasarkan ID (Get Expense by ID)** 🔍
+- **Memperbarui Pengeluaran Berdasarkan ID (Update Expense by ID)** 🔄
+- **Menghapus Pengeluaran Berdasarkan ID (Delete Expense by ID)** 🗑️
 
 ---
 
@@ -99,20 +101,20 @@ model Expense {
 
 ---
 
-## Instalasi
+## ⚙️ Instalasi
 
-### Clone Repository
+### 📂 Clone Repository
 ```bash
 git clone <repository-url>
 cd NeuroFin
 ```
 
-### Instal Dependencies
+### 📦 Instal Dependencies
 ```bash
 npm install
 ```
 
-### .Env
+### 🔒 .Env
 Ganti file `.env.example` menjadi `.env` dan sesuaikan isi konfigurasinya
 ```
 # Connect to Supabase via connection pooling.
@@ -129,7 +131,7 @@ JWT_SECRET=your_jwt_secret
 PORT=9000
 ```
 
-### Migrasi Database
+### 🔄 Migrasi Database
 Pastikan folder migrations "contoh: 20250415062651_init" sudah ada, jika belum dapat jalankan perintah:
 ```bash
 npx prisma migrate dev --name init
@@ -137,7 +139,7 @@ npx prisma migrate dev --name init
 untuk mengekstrak schema database kedalam migration.sql
 ```
 
-### Menjalankan Server di Local
+### 🚀 Menjalankan Server di Local
 ```bash
 npm run dev
 ```
@@ -145,10 +147,11 @@ Server akan berjalan di [http://localhost:9000](http://localhost:9000).
 
 ---
 
-## Endpoint API
+## 🔌 Endpoint API
 
 **Headers:** `Content-Type: application/json` untuk endpoint register, verify-email, dan login
-### Register 
+
+### 📝 Register 
 - **URL:** `POST  /register`
 - **Request example:**
   ```json
@@ -166,7 +169,7 @@ Server akan berjalan di [http://localhost:9000](http://localhost:9000).
   }
   ```
 
-### Verify Email 
+### 📧 Verify Email 
 - **URL:** `POST /verify-email`
 - **Request example:**
   ```json
@@ -183,7 +186,7 @@ Server akan berjalan di [http://localhost:9000](http://localhost:9000).
   }
   ```
 
-### Login 
+### 🔑 Login 
 - **URL:** `POST /login`
 - **Request example:**
   ```json
@@ -203,11 +206,12 @@ Server akan berjalan di [http://localhost:9000](http://localhost:9000).
   }
   ```
 
-**Headers:** 
-`Content-Type: application/json` 
-`Authorization: Bearer {{authToken}}`
-untuk header semua endpoint expense, me dan logout
-### 1. Create Expense
+**Headers:**  
+`Content-Type: application/json`  
+`Authorization: Bearer {{authToken}}`  
+Untuk header semua endpoint expense, me dan logout
+
+### 1️⃣. Create Expense
 
 - **URL:** `POST /expenses`
 - **Request example:**
@@ -232,7 +236,7 @@ untuk header semua endpoint expense, me dan logout
   }
   ```
 
-### 2. Get All Expenses
+### 2️⃣. Get All Expenses
 
 - **URL:** `GET /expenses`
 - **Response:**
@@ -257,7 +261,7 @@ untuk header semua endpoint expense, me dan logout
   }
   ```
 
-### 3. Get Expense by ID
+### 3️⃣. Get Expense by ID
 
 - **URL:** `GET /expenses/{expenseid}`
 
@@ -289,7 +293,7 @@ untuk header semua endpoint expense, me dan logout
   }
   ```
 
-### 4. Update Expense by ID
+### 4️⃣. Update Expense by ID
 
 - **URL:** `PUT /expenses/{expenseid}`
 - **Request:**
@@ -318,7 +322,7 @@ untuk header semua endpoint expense, me dan logout
   }
   ```
 
-### 5. Delete Expense by ID
+### 5️⃣. Delete Expense by ID
 
 - **URL:** `DELETE /expenses/{expenseid}`
 - **Response (Jika Berhasil):**
@@ -335,8 +339,8 @@ untuk header semua endpoint expense, me dan logout
     "message": "Expense gagal dihapus. Id tidak ditemukan"
   }
   ```
-  
-  ### 6. Me
+
+### 6️⃣. Me
 
 - **URL:** `GET /me`
 - **Response (Jika Berhasil):**
@@ -362,7 +366,7 @@ untuk header semua endpoint expense, me dan logout
   }
   ```
 
-  ### 7. Logout
+### 7️⃣. Logout
 
 - **URL:** `POST /logout`
 - **Response (Jika Berhasil):**
@@ -380,9 +384,10 @@ untuk header semua endpoint expense, me dan logout
       "message": "Token tidak valid atau kadaluarsa"
   }
   ```
+
 ---
 
-## Error Handling
+## ❗ Error Handling
 
 Semua error dikembalikan dalam format berikut:
 ```json
@@ -394,15 +399,16 @@ Semua error dikembalikan dalam format berikut:
 
 ---
 
-## Testing
+## 🧪 Testing
 
 Gunakan file Postman Collection pada folder postman untuk menguji API:
-- **Collection:** `[NeuroFin] Expense API TEST.postman_collection.json`
-- **Environment:** `[NeuroFin] Expenses API Environtment.postman_environment.json`
+- **Collection:** `[NeuroFin] Expense API TEST.postman_collection.json` 📄
+- **Environment:** `[NeuroFin] Expenses API Environtment.postman_environment.json` 🌐
 
 ---
 
-## Kontributor
+## 👥 Kontributor
 
-- **Backend Developer:** Rayan Khairullah Al Rafy  & [ Agung Arya Dwipa Laksana ](https://github.com/AgungADL/Capstone-backend-auth)
-- **From:** NeuroFin Project
+- **Backend Auth:** [ Agung Arya Dwipa Laksana ](https://github.com/AgungADL/Capstone-backend-auth) 🔗
+- **Backend Expense:** [Rayan Khairullah Al Rafy](https://github.com/RayanKhairullah) 🔗
+- **From:** NeuroFin Capstone
